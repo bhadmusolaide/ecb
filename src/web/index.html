@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Economic Calendar Bias</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<header class="top">
+  <div class="brand">
+    <h1>Economic Calendar Bias</h1>
+    <div class="sub" id="clock">loading…</div>
+  </div>
+  <div class="topright">
+    <div class="px" id="px"><span class="pxv">–</span><span class="pxs" id="pxsrc"></span></div>
+    <select id="symbol" class="ghost"></select>
+    <button id="refresh">Refresh</button>
+    <button class="ghost" id="theme">◐</button>
+    <span class="status" id="loadstatus">● live</span>
+  </div>
+</header>
+
+<nav class="tabs">
+  <button class="tab active" data-tab="now">Now</button>
+  <button class="tab" data-tab="calendar">Calendar</button>
+  <button class="tab" data-tab="news">News</button>
+  <button class="tab" data-tab="journal">Journal</button>
+</nav>
+
+<main>
+  <!-- ================= NOW ================= -->
+  <section id="tab-now">
+    <div class="card biascard">
+      <div class="biasrow">
+        <div>
+          <div class="label">DXY bias</div>
+          <div class="big" id="bias">–</div>
+        </div>
+        <div class="badges">
+          <span class="badge" id="stance">–</span>
+          <span class="badge" id="regime">–</span>
+        </div>
+      </div>
+      <div class="conf">
+        <div class="conflabel"><span>Confidence</span><span id="confv">–</span></div>
+        <div class="bar"><i id="confbar"></i></div>
+      </div>
+      <div class="price-sparkline">
+        <div class="ps-label">DXY price (last 24h)</div>
+        <canvas id="sparkline" width="400" height="60"></canvas>
+        <div class="ps-range" id="sparkrange">–</div>
+      </div>
+      <div class="meta">
+        <div><span class="k">Score</span><span class="v" id="score">–</span></div>
+        <div><span class="k">Session</span><span class="v" id="session">–</span></div>
+        <div><span class="k">News tilt</span><span class="v" id="newstilt">–</span></div>
+      </div>
+      <div class="context" id="context"></div>
+      <div class="drivers" id="drivers"></div>
+      <div class="conflicts" id="conflicts"></div>
+    </div>
+
+    <div class="card">
+      <h2>Next event</h2>
+      <div id="nextevent" class="muted">No scheduled USD events in the feed.</div>
+    </div>
+
+    <div class="card">
+      <h2>Impulse breakdown</h2>
+      <div id="cats"></div>
+    </div>
+
+    <div class="card">
+      <h2>Recent releases</h2>
+      <div id="recent"></div>
+    </div>
+  </section>
+
+  <!-- ================= CALENDAR ================= -->
+  <section id="tab-calendar" class="hidden">
+    <div class="card">
+      <div class="row">
+        <button class="s active" data-scope="day">Today</button>
+        <button class="s" data-scope="week">Next 7 days</button>
+        <button class="s" data-scope="all">Everything loaded</button>
+      </div>
+      <div id="calendar"></div>
+      <div id="calendar-empty" class="empty" style="display:none">No USD calendar events in the selected range.</div>
+    </div>
+  </section>
+
+  <!-- ================= NEWS ================= -->
+  <section id="tab-news" class="hidden">
+    <div class="card">
+      <h2>Macro &amp; geopolitical feed</h2>
+      <div class="sub" id="newssub"></div>
+      <div id="news"></div>
+      <div id="news-empty" class="empty" style="display:none">No news items in the feed.</div>
+    </div>
+  </section>
+
+  <!-- ================= JOURNAL ================= -->
+  <section id="tab-journal" class="hidden">
+    <div class="card">
+      <h2>Track record</h2>
+      <div id="stats"></div>
+    </div>
+    <div class="card">
+      <h2>Log a trade</h2>
+      <div class="row">
+        <input id="j-inst" placeholder="Instrument (DXY)" value="DXY">
+        <input id="j-bias" placeholder="Bias" value="Bullish">
+        <input id="j-note" placeholder="Note">
+      </div>
+      <button id="j-save">Save entry</button>
+      <div id="journal"></div>
+    </div>
+  </section>
+</main>
+
+  <footer class="foot">
+    <span id="sources">–</span> <span id="updated">–</span>
+  </footer>
+
+<script src="/app.js" type="module"></script>
+</body>
+</html>
