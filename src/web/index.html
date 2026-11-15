@@ -48,7 +48,7 @@
       </div>
       <div class="price-sparkline">
         <div class="ps-label">DXY price (last 24h)</div>
-        <canvas id="sparkline" width="400" height="60"></canvas>
+        <canvas id="sparkline"></canvas>
         <div class="ps-range" id="sparkrange">–</div>
       </div>
       <div class="meta">
@@ -110,7 +110,11 @@
       <h2>Log a trade</h2>
       <div class="row">
         <input id="j-inst" placeholder="Instrument (DXY)" value="DXY">
-        <input id="j-bias" placeholder="Bias" value="Bullish">
+        <select id="j-bias">
+          <option>Bullish</option>
+          <option>Neutral</option>
+          <option>Bearish</option>
+        </select>
         <input id="j-note" placeholder="Note">
       </div>
       <button id="j-save">Save entry</button>

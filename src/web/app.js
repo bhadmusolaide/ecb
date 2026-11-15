@@ -39,7 +39,7 @@ function setLoading(v) {
   loading = v;
   const el = $("loadstatus");
   el.textContent = v ? "● refreshing…" : "● live";
-  el.style.color = v ? "var(--y)" : "var(--g)";
+  el.className = `status ${v ? "loading" : "live"}`;
   el.title = v ? "Data refresh in progress" : "Data is current";
 }
 
@@ -62,15 +62,22 @@ function renderSparkline(s) {
   const rangeEl = $("sparkrange");
   if (!canvas || !rangeEl) return;
   const ctx = canvas.getContext("2d");
+  const dpr = window.devicePixelRatio || 1;
+  const style = getComputedStyle(document.documentElement);
+  const accent = style.getPropertyValue("--ac").trim();
+  const yellow = style.getPropertyValue("--y").trim();
   const dpx = s.prices?.DXY;
   const hist = s.dxyHistory || [];
   if (!dpx || dpx.source === "unavailable" || !hist.length) {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.clearRect(0, 0, canvas.width || 300, canvas.height || 60);
     rangeEl.textContent = "no DXY data";
     return;
   }
-  const w = canvas.width;
-  const h = canvas.height;
+  const w = canvas.clientWidth || 400;
+  const h = canvas.clientHeight || 60;
+  canvas.width = w * dpr;
+  canvas.height = h * dpr;
+  ctx.scale(dpr, dpr);
   const pad = 4;
   const pts = hist.map((p) => ({ x: p.ts, y: p.price }));
   const minY = Math.min(...pts.map((p) => p.y));
@@ -82,7 +89,7 @@ function renderSparkline(s) {
 
   ctx.clearRect(0, 0, w, h);
   ctx.beginPath();
-  ctx.strokeStyle = dpx.source.includes("proxy") ? "var(--y)" : "var(--ac)";
+  ctx.strokeStyle = dpx.source.includes("proxy") ? yellow : accent;
   ctx.lineWidth = 2;
   ctx.lineCap = "round";
   pts.forEach((p, i) => {
@@ -93,13 +100,12 @@ function renderSparkline(s) {
   });
   ctx.stroke();
 
-  // dot at last point
   const last = pts[pts.length - 1];
   const lx = pad + ((last.x - t0) / span) * (w - pad * 2);
   const ly = h - pad - ((last.y - minY) / range) * (h - pad * 2);
   ctx.beginPath();
   ctx.arc(lx, ly, 3, 0, Math.PI * 2);
-  ctx.fillStyle = dpx.source.includes("proxy") ? "var(--y)" : "var(--ac)";
+  ctx.fillStyle = dpx.source.includes("proxy") ? yellow : accent;
   ctx.fill();
 
   rangeEl.textContent = `DXY ${dpx.price.toFixed(3)} · low ${minY.toFixed(2)} · high ${maxY.toFixed(2)} · ${dpx.source.includes("proxy") ? "synthetic" : "live"}`;
