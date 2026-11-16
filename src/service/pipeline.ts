@@ -18,6 +18,7 @@ import type { PrePlan } from "../engine/preplan.ts";
 import { stanceFromScore } from "../engine/lexicon.ts";
 import { readFedTone, readHeadline, llmAvailable } from "../llm/analyst.ts";
 import * as q from "../store/queries.ts";
+const savePrice = q.savePrice;
 import { getKv, setKv } from "../store/db.ts";
 import { etParts, sessionFor, sessionMeta, fmtEtFull, humanDuration } from "../util/time.ts";
 import { parseNumber } from "../util/numbers.ts";
@@ -297,7 +298,7 @@ export async function seedPriceHistory(): Promise<number> {
   const all = await getAllCandles("5min", 500).catch(() => new Map<string, Candle[]>());
   let total = 0;
   for (const [key, candles] of all) {
-    for (const c of candles) q.savePrice({ symbol: key, ts: c.ts, price: c.price, source: `twelvedata:candles:${key}` });
+    for (const c of candles) savePrice({ symbol: key, ts: c.ts, price: c.price, source: `twelvedata:candles:${key}` });
     total += candles.length;
   }
   return total;
@@ -308,7 +309,7 @@ export async function refreshPrices(now = Date.now()): Promise<Map<string, Price
   const out = new Map<string, PricePoint>();
   for (const [key, q] of quotes) {
     const p: PricePoint = { symbol: key, ts: q.ts || now, price: q.price, source: q.source };
-    q.savePrice(p);
+    savePrice(p);
     out.set(key, p);
   }
   // Feed down: keep serving the last real print for any symbol we couldn't fetch.
