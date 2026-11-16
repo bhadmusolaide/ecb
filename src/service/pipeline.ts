@@ -3,6 +3,8 @@
  */
 import { fetchFeedEvents, fetchWeek, rowTimestamp } from "../providers/calendar/forexfactory.ts";
 import type { ScrapedRow, RawFeedEvent } from "../providers/calendar/forexfactory.ts";
+import { fetchInvestingCalendar } from "../providers/calendar/investing.ts";
+import type { InvestingRow } from "../providers/calendar/investing.ts";
 import { fetchFedDocs } from "../providers/calendar/fed.ts";
 import type { FedDoc } from "../providers/calendar/fed.ts";
 import { fetchAllNews } from "../providers/news/rss.ts";
@@ -59,6 +61,12 @@ export async function refreshCalendar(now = Date.now()): Promise<{ added: number
 
   // 2) public JSON feed as a supplement (current week) and as a fallback
   const feed = await fetchFeedEvents();
+
+  // 3) fallback: when both ForexFactory sources are blocked, try Investing.com
+  if (rows.length === 0 && feed.length === 0) {
+    const ir = await fetchInvestingCalendar();
+    for (const r of ir) rows.push(r);
+  }
 
   const jsonByKey = new Map<string, RawFeedEvent>();
   for (const f of feed) {
